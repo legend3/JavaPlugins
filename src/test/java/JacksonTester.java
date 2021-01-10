@@ -2,12 +2,15 @@ import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -68,21 +71,33 @@ public class JacksonTester {
             System.out.println(student);
             jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(student);
             System.out.println(jsonString);
-        }
-        catch (JsonParseException e) { e.printStackTrace();}
-        catch (JsonMappingException e) { e.printStackTrace(); }
-        catch (IOException e) { e.printStackTrace(); }
+        } catch (JsonParseException e) {
+            e.printStackTrace();
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace(); }
     }
     @Test
     public void test02(){
+        /**
+         * ObjectMapper是Jackson库的主要actor类。
+         * ObjectMapper类ObjectMapper提供了从基本POJO（普通旧Java对象）或从通用JSON树模型（JsonNode）读取和写入JSON的功能，
+         * 以及执行转换的相关功能。
+         * 它还可以高度自定义，可以使用不同样式的JSON内容，并支持更高级的Object概念，如多态和对象标识。
+         * ObjectMapper还充当更高级的ObjectReader和ObjectWriter类的工厂
+         */
         ObjectMapper mapper = new ObjectMapper();
         String jsonString = "{\"name\":\"Mahesh\", \"age\":21}";
         //map json to student
         try{
-            Student student = mapper.readValue(jsonString, Student.class);
+            Student student = mapper.readValue(jsonString, Student.class);//反序列化(为Student对象)
             System.out.println(student);
-            jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(student);
+            jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(student);//序列化
             System.out.println(jsonString);
+
+            ArrayList array = JsonPath.parse(jsonString).read("$.*");//反序列化为数组对象
+            System.out.println(array);
         }
         catch (JsonParseException e) { e.printStackTrace();}
         catch (JsonMappingException e) { e.printStackTrace(); }
@@ -90,13 +105,16 @@ public class JacksonTester {
     }
     @Test
     public void test03() {
+        /**
+         * 创建了Student类。 我们将创建一个student.json文件，该文件将具有Student对象的json表示
+         */
         JacksonTester tester = new JacksonTester();
         try {
             Student student = new Student();
             student.setAge(10);
             student.setName("Mahesh");
             tester.writeJSON(student);
-            Student student1 = tester.readJSON();
+            Student student1 = tester.readJSON();//自动创建一个有Student对象的json表示的文件,studnet.json
             System.out.println(student1);
         } catch (JsonParseException e) {
             e.printStackTrace();
@@ -108,6 +126,16 @@ public class JacksonTester {
     }
     @Test
     public void test04() {
+        /**
+         * Data Binding API用于使用属性访问器或使用注释将JSON转换为POJO（Plain Old Java Object）和从POJO（Plain Old Java Object）转换JSON。
+         * 它有两种类型。
+         *
+         * Simple Data Binding - 将JSON转换为Java的Map，Arraylist，String，数字，Boolean和null。
+         *
+         * Full Data Binding - 将JSON转换为任何JAVA类型。
+         *
+         * ObjectMapper为两种类型的数据绑定读取/写入JSON。 数据绑定是最方便的方式，类似于XML的JAXB parer。
+         */
         JacksonTester tester = new JacksonTester();
         try {
             ObjectMapper mapper = new ObjectMapper();
