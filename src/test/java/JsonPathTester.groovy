@@ -158,6 +158,14 @@ class JsonPathTester {
         println configuration5.getOptions()
         ArrayList SUPPRESS_EXCEPTIONS = JsonPath.using(configuration5).parse(s).read('$[*].c')//net.minidev.json.JSONArray
         println SUPPRESS_EXCEPTIONS//net.minidev.json.JSONArray
+
+    }
+    @Test
+    void returnMap() {
+        //
+        String jsonMap = "{\"fields\":{\"field1\":1,\"field2\":2,\"field3\":3,\"field4\":\"4\"}}";
+        def m = ["name": "value"].toString()
+        Json
     }
     @Test
     void odcTest() {
